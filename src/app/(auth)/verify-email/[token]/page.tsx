@@ -1,18 +1,85 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
+
 /**
  * Email Verification Page — StoryForge AI
- * Will be fully implemented in feat:1_auth-system.
+ * Automatically verifies the email on page load using the token from the URL.
  */
 export default function VerifyEmailPage() {
+  const params = useParams();
+  const token = params.token as string;
+
+  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    const verifyEmail = async () => {
+      try {
+        const response = await fetch("/api/auth/verify-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          setStatus("success");
+          setMessage(result.message);
+        } else {
+          setStatus("error");
+          setMessage(result.error);
+        }
+      } catch {
+        setStatus("error");
+        setMessage("Something went wrong. Please try again.");
+      }
+    };
+
+    if (token) {
+      verifyEmail();
+    }
+  }, [token]);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="w-full max-w-md space-y-6 rounded-lg border border-border p-8">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground">Verify Email</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Verifying your email address...
-          </p>
-        </div>
-      </div>
-    </div>
+    <Card>
+      <CardHeader className="text-center">
+        <CardTitle>Email Verification</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col items-center gap-4 text-center">
+        {status === "loading" && (
+          <>
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+            <p className="text-muted-foreground">Verifying your email...</p>
+          </>
+        )}
+
+        {status === "success" && (
+          <>
+            <CheckCircle2 className="h-12 w-12 text-emerald-500" />
+            <p className="text-foreground">{message}</p>
+            <Button asChild className="mt-2">
+              <Link href="/login">Go to Sign In</Link>
+            </Button>
+          </>
+        )}
+
+        {status === "error" && (
+          <>
+            <XCircle className="h-12 w-12 text-destructive" />
+            <p className="text-foreground">{message}</p>
+            <Button asChild variant="outline" className="mt-2">
+              <Link href="/login">Go to Sign In</Link>
+            </Button>
+          </>
+        )}
+      </CardContent>
+    </Card>
   );
 }

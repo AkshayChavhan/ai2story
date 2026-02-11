@@ -1,21 +1,33 @@
+import Link from "next/link";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { ForgotPasswordForm } from "@/components/forms/auth/forgot-password-form";
+import { ArrowLeft } from "lucide-react";
+
 /**
  * Forgot Password Page — StoryForge AI
- * Will be fully implemented in feat:1_auth-system.
+ * Send a password reset link to the user's email.
  */
 export default function ForgotPasswordPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="w-full max-w-md space-y-6 rounded-lg border border-border p-8">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground">Forgot Password</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Enter your email to receive a password reset link
-          </p>
-        </div>
-        <p className="text-center text-sm text-muted-foreground">
-          Password reset will be implemented in feat:1_auth-system
-        </p>
-      </div>
-    </div>
+    <Card>
+      <CardHeader className="text-center">
+        <CardTitle>Forgot Password</CardTitle>
+        <CardDescription>
+          Enter your email to receive a password reset link
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ForgotPasswordForm />
+      </CardContent>
+      <CardFooter className="justify-center">
+        <Link
+          href="/login"
+          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to sign in
+        </Link>
+      </CardFooter>
+    </Card>
   );
 }
