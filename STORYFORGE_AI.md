@@ -48,8 +48,8 @@ See `documents/architecture/ARCHITECTURE.md` for full system architecture.
 |---|---------|--------|
 | 0 | Initial project setup | Done |
 | 1 | Auth system (login, signup, email verification) | Done |
-| 2 | Dashboard layout | Planned |
-| 3 | Project management (CRUD) | Planned |
+| 2 | Dashboard layout | Done |
+| 3 | Project management (CRUD) | Done |
 | 4 | Story generator UI | Planned |
 | 5 | Story AI integration (Gemini) | Planned |
 | 6 | Image generation (Pollinations.ai) | Planned |
