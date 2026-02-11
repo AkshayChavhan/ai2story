@@ -44,7 +44,7 @@ export async function POST(request: Request) {
     await prisma.loginHistory.create({
       data: {
         userId,
-        deviceInfo,
+        deviceInfo: { ...deviceInfo },
         ipAddress,
         sessionId: (session as any).sessionId || "unknown",
       },

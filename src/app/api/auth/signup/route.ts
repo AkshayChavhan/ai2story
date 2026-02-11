@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     const result = signupSchema.safeParse(body);
     if (!result.success) {
       return NextResponse.json(
-        { success: false, error: result.error.errors[0].message },
+        { success: false, error: result.error.issues[0].message },
         { status: 400 }
       );
     }

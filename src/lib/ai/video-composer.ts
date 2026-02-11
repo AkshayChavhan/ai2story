@@ -67,7 +67,7 @@ export function composeScene(
       ])
       .output(outputPath)
       .on("end", () => resolve())
-      .on("error", (err) => reject(err))
+      .on("error", (err: Error) => reject(err))
       .run();
   });
 }
@@ -113,7 +113,7 @@ export async function composeVideo(
       .on("end", () => {
         resolve(`/uploads/videos/${outputFileName}`);
       })
-      .on("error", (err) => reject(err))
+      .on("error", (err: Error) => reject(err))
       .mergeToFile(outputPath, OUTPUT_DIR);
   });
 }

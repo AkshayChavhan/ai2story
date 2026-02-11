@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 /**
  * Email Verification Page — StoryForge AI
@@ -64,9 +65,9 @@ export default function VerifyEmailPage() {
           <>
             <CheckCircle2 className="h-12 w-12 text-emerald-500" />
             <p className="text-foreground">{message}</p>
-            <Button asChild className="mt-2">
-              <Link href="/login">Go to Sign In</Link>
-            </Button>
+            <Link href="/login" className={cn(buttonVariants(), "mt-2")}>
+              Go to Sign In
+            </Link>
           </>
         )}
 
@@ -74,9 +75,9 @@ export default function VerifyEmailPage() {
           <>
             <XCircle className="h-12 w-12 text-destructive" />
             <p className="text-foreground">{message}</p>
-            <Button asChild variant="outline" className="mt-2">
-              <Link href="/login">Go to Sign In</Link>
-            </Button>
+            <Link href="/login" className={cn(buttonVariants({ variant: "outline" }), "mt-2")}>
+              Go to Sign In
+            </Link>
           </>
         )}
       </CardContent>

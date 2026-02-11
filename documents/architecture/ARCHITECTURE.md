@@ -1,6 +1,6 @@
 # StoryForge AI — System Architecture
 ## Last Updated: 2026-02-11
-## Updated By Commit: feat:1_auth-system
+## Updated By Commit: feat:2_dashboard-layout
 
 ---
 
@@ -103,3 +103,5 @@ This folder preserves the exact development context for each feature, including 
 | 2026-02-11 | JWT session strategy | Stateless, works with single device enforcement |
 | 2026-02-11 | Prisma v6 (downgraded from v7) | v7 removed datasource `url` property in schema, breaking MongoDB setup |
 | 2026-02-11 | No PrismaAdapter for NextAuth | Conflicts with JWT strategy + Credentials provider; manual Prisma queries give full control over OAuth user creation and single-device enforcement |
+| 2026-02-11 | No Radix UI for DropdownMenu/Sheet | Zero new dependencies; native React state + click-outside + escape key sufficient for current needs |
+| 2026-02-11 | Dashboard page as Server Component | Uses auth() + Prisma directly for data; no API route or loading state needed |
