@@ -1,6 +1,6 @@
 # StoryForge AI — System Architecture
 ## Last Updated: 2026-02-11
-## Updated By Commit: feat:2_dashboard-layout
+## Updated By Commit: feat:3_project-management
 
 ---
 
@@ -34,8 +34,11 @@
 | POST | /api/auth/record-login | Record login history | Done |
 | POST | /api/auth/forgot-password | Request password reset | Done |
 | POST | /api/auth/reset-password | Reset password with token | Done |
-| * | /api/projects | Project CRUD | Planned |
-| * | /api/projects/[id] | Single project | Planned |
+| GET | /api/projects | List projects (search, filter, paginate) | Done |
+| POST | /api/projects | Create project | Done |
+| GET | /api/projects/[id] | Fetch single project | Done |
+| PUT | /api/projects/[id] | Update project | Done |
+| DELETE | /api/projects/[id] | Delete project (cascades) | Done |
 | * | /api/voices | List TTS voices | Planned |
 | * | /api/media | Media library | Planned |
 | * | /api/templates | Story templates | Planned |
@@ -105,3 +108,6 @@ This folder preserves the exact development context for each feature, including 
 | 2026-02-11 | No PrismaAdapter for NextAuth | Conflicts with JWT strategy + Credentials provider; manual Prisma queries give full control over OAuth user creation and single-device enforcement |
 | 2026-02-11 | No Radix UI for DropdownMenu/Sheet | Zero new dependencies; native React state + click-outside + escape key sufficient for current needs |
 | 2026-02-11 | Dashboard page as Server Component | Uses auth() + Prisma directly for data; no API route or loading state needed |
+| 2026-02-11 | API routes for project CRUD | Project list needs client-side search/filter; API routes enable that while server pages use direct Prisma |
+| 2026-02-11 | No Radix UI for Dialog/Select | Continued zero-dependency approach; native Dialog with portal + escape + click-outside; native `<select>` for form dropdowns |
+| 2026-02-11 | `z.input<>` for form types | Avoids type mismatch between Zod output types (with defaults) and react-hook-form input types |
