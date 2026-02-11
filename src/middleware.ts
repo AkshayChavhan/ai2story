@@ -1,18 +1,24 @@
-import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 
 /**
  * Next.js Middleware — Route protection and session management.
+ *
+ * Uses getToken() from next-auth/jwt (edge-compatible) instead of auth()
+ * to avoid importing Prisma/crypto which aren't available in edge runtime.
  *
  * - Protects dashboard routes (redirects to /login if unauthenticated)
  * - Redirects authenticated users away from auth pages
  * - Detects expired sessions (single device enforcement) and redirects to login
  */
-export default auth((req) => {
+export async function middleware(req: NextRequest) {
   const { nextUrl } = req;
-  const session = req.auth;
-  const isLoggedIn = !!session?.user;
   const pathname = nextUrl.pathname;
+
+  // Get JWT token (edge-compatible, no Prisma needed)
+  const token = await getToken({ req, secret: process.env.AUTH_SECRET });
+  const isLoggedIn = !!token;
 
   // Define route categories
   const isAuthPage =
@@ -29,17 +35,10 @@ export default auth((req) => {
     pathname.startsWith("/templates") ||
     pathname.startsWith("/settings");
 
-  const isPublicPage =
-    pathname === "/" ||
-    pathname.startsWith("/share/") ||
-    pathname.startsWith("/about") ||
-    pathname.startsWith("/contact");
-
   // Check for expired session (single device enforcement)
-  if (isLoggedIn && session.expired) {
+  if (isLoggedIn && token.expired) {
     const loginUrl = new URL("/login", nextUrl);
     loginUrl.searchParams.set("error", "session-expired");
-    // Clear the session cookie by signing out
     const response = NextResponse.redirect(loginUrl);
     response.cookies.delete("authjs.session-token");
     response.cookies.delete("__Secure-authjs.session-token");
@@ -59,17 +58,17 @@ export default auth((req) => {
   }
 
   return NextResponse.next();
-});
+}
 
 /**
  * Middleware matcher — runs on all routes except:
  * - Static files (_next/static, _next/image)
  * - Favicon
  * - Public uploads
- * - API routes (except /api/auth which NextAuth needs)
+ * - API routes (handled by their own auth)
  */
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|uploads|images|fonts).*)",
+    "/((?!_next/static|_next/image|favicon.ico|uploads|images|fonts|api).*)",
   ],
 };

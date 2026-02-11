@@ -40,18 +40,18 @@ export async function generateVoice(
     </speak>
   `;
 
-  const readable = tts.toStream(ssml);
+  const { audioStream } = tts.toStream(ssml);
 
   // Collect stream into buffer
   const chunks: Buffer[] = [];
   return new Promise((resolve, reject) => {
-    readable.on("data", (chunk: Buffer) => {
+    audioStream.on("data", (chunk: Buffer) => {
       chunks.push(chunk);
     });
-    readable.on("end", () => {
+    audioStream.on("end", () => {
       resolve(Buffer.concat(chunks));
     });
-    readable.on("error", reject);
+    audioStream.on("error", reject);
   });
 }
 

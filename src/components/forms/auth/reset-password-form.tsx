@@ -4,13 +4,14 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { resetPasswordSchema, type ResetPasswordFormData } from "@/lib/validations/auth";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormError } from "@/components/forms/auth/form-error";
 import { FormSuccess } from "@/components/forms/auth/form-success";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 /**
  * Reset password form — validates token and sets new password.
@@ -120,9 +121,9 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
       <FormSuccess message={success} />
 
       {success ? (
-        <Button asChild className="w-full">
-          <Link href="/login">Go to Sign In</Link>
-        </Button>
+        <Link href="/login" className={cn(buttonVariants(), "w-full")}>
+          Go to Sign In
+        </Link>
       ) : (
         <Button
           type="submit"
