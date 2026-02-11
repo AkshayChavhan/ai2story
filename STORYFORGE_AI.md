@@ -47,7 +47,7 @@ See `documents/architecture/ARCHITECTURE.md` for full system architecture.
 | # | Feature | Status |
 |---|---------|--------|
 | 0 | Initial project setup | Done |
-| 1 | Auth system (login, signup, email verification) | Planned |
+| 1 | Auth system (login, signup, email verification) | Done |
 | 2 | Dashboard layout | Planned |
 | 3 | Project management (CRUD) | Planned |
 | 4 | Story generator UI | Planned |
@@ -65,6 +65,7 @@ All documentation lives in the `documents/` directory:
 - `architecture/` — System architecture
 - `features/` — Feature specifications
 - `claude-conversation/` — Development conversation logs
+- `realtime-conversation/` — Exact conversation logs and summaries from each feature's development session (e.g., `feat-1_auth_system/feat-1_auth-system.md` for the full conversation, `feat-1_summary.md` for the completion summary)
 - `tech-stack/` — Technology documentation
 - `layman-flow/` — Simple feature explanations
 - `tech-flow/` — Technical flow diagrams
