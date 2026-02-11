@@ -1,0 +1,201 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  email             String    @unique
+  passwordHash      String?
+  name              String?
+  avatar            String?
+  emailVerified     DateTime?
+  provider          String?
+
+  // Single device enforcement
+  activeSessionId   String?
+  activeDeviceInfo  Json?
+  lastLoginAt       DateTime?
+
+  // Usage tracking
+  videosCreated     Int       @default(0)
+  storageUsedBytes  Int       @default(0)
+
+  // Relations
+  projects          Project[]
+  mediaAssets       MediaAsset[]
+  loginHistory      LoginHistory[]
+  savedPrompts      SavedPrompt[]
+  accounts          Account[]
+  sessions          Session[]
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expires      DateTime
+}
+
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Project {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String        @db.ObjectId
+  user            User          @relation(fields: [userId], references: [id])
+
+  title           String
+  description     String?
+  prompt          String
+  status          String        @default("draft")
+
+  // Story Config
+  genre           String?
+  tone            String?
+  targetLength    Int?
+  targetAudience  String?
+  language        String        @default("en")
+  imageStyle      String        @default("photorealistic")
+  aspectRatio     String        @default("9:16")
+
+  scenes          Scene[]
+  characters      Character[]
+
+  // Final Output
+  videoUrl        String?
+  thumbnailUrl    String?
+  duration        Int?
+  resolution      String?
+
+  // Sharing
+  isPublic        Boolean       @default(false)
+  shareToken      String?       @unique
+
+  version         Int           @default(1)
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model Scene {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  projectId       String   @db.ObjectId
+  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  order           Int
+  narrationText   String
+  visualPrompt    String
+  cameraDirection String?
+  mood            String?
+  duration        Float?
+
+  imageUrl        String?
+  videoClipUrl    String?
+  audioUrl        String?
+
+  voiceId         String?
+  voiceSpeed      Float?   @default(1.0)
+  voicePitch      String?  @default("+0Hz")
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Character {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  projectId       String   @db.ObjectId
+  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  name            String
+  description     String
+  referenceImage  String?
+  voiceId         String?
+
+  createdAt       DateTime @default(now())
+}
+
+model MediaAsset {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   @db.ObjectId
+  user        User     @relation(fields: [userId], references: [id])
+
+  type        String
+  url         String
+  fileName    String
+  fileSize    Int
+  mimeType    String
+  metadata    Json?
+
+  createdAt   DateTime @default(now())
+}
+
+model LoginHistory {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String    @db.ObjectId
+  user        User      @relation(fields: [userId], references: [id])
+
+  deviceInfo  Json
+  ipAddress   String
+  location    String?
+  sessionId   String
+  loggedOutAt DateTime?
+  loggedOutBy String?
+
+  createdAt   DateTime  @default(now())
+}
+
+model SavedPrompt {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   @db.ObjectId
+  user        User     @relation(fields: [userId], references: [id])
+
+  title       String
+  prompt      String
+  genre       String?
+
+  createdAt   DateTime @default(now())
+}
+
+model StoryTemplate {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  prompt      String
+  genre       String
+  thumbnail   String?
+  isActive    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+}
