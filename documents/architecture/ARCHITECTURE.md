@@ -1,6 +1,6 @@
 # StoryForge AI — System Architecture
 ## Last Updated: 2026-02-11
-## Updated By Commit: feat:6_image-generation
+## Updated By Commit: feat:7_voice-generation
 
 ---
 
@@ -46,7 +46,9 @@
 | DELETE | /api/projects/[id]/scenes/[sceneId] | Delete a scene + reorder | Done |
 | POST | /api/projects/[id]/generate-images | Batch generate images for all scenes | Done |
 | POST | /api/projects/[id]/scenes/[sceneId]/generate-image | Regenerate image for a single scene | Done |
-| * | /api/voices | List TTS voices | Planned |
+| GET | /api/voices | List available TTS voices (cached) | Done |
+| POST | /api/projects/[id]/generate-voices | Batch generate audio for all scenes | Done |
+| POST | /api/projects/[id]/scenes/[sceneId]/generate-voice | Regenerate audio for a single scene | Done |
 | * | /api/media | Media library | Planned |
 | * | /api/templates | Story templates | Planned |
 | * | /api/share | Public sharing | Planned |
@@ -129,3 +131,9 @@ This folder preserves the exact development context for each feature, including 
 | 2026-02-11 | Local `<img>` tags for generated images | Images are local files in `public/uploads/`; no Next.js Image domain config needed |
 | 2026-02-11 | `nologo=true` on Pollinations URL | Removes watermark from generated images |
 | 2026-02-11 | Local React state for ImageGallery | Standalone page uses local state instead of Zustand (independent from Story Editor) |
+| 2026-02-11 | 1s delay for voice generation | Edge TTS is faster than Pollinations.ai; 1s delay sufficient between scenes |
+| 2026-02-11 | Two-tier voice selector (locale → voice) | 300+ voices too many for flat dropdown; filter by locale first |
+| 2026-02-11 | Default voice at gallery level | Most users want one voice; per-scene override available in SceneVoiceCard |
+| 2026-02-11 | HTML5 `<audio controls>` for playback | Native browser player, zero dependencies, works everywhere |
+| 2026-02-11 | Voice settings saved per-scene in DB | voiceId, voiceSpeed, voicePitch persisted for reproducibility |
+| 2026-02-11 | Module-level cache for voice list | `listVoices()` makes network call; cached in module variable |

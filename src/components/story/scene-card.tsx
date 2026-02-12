@@ -29,6 +29,7 @@ import {
   Camera,
   Palette,
   ImageIcon,
+  Volume2,
   RefreshCw,
   Loader2,
 } from "lucide-react";
@@ -63,6 +64,7 @@ export function SceneCard({
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isRegeneratingImage, setIsRegeneratingImage] = useState(false);
+  const [isRegeneratingVoice, setIsRegeneratingVoice] = useState(false);
 
   const handleRegenerateImage = async () => {
     setIsRegeneratingImage(true);
@@ -84,6 +86,29 @@ export function SceneCard({
       );
     } finally {
       setIsRegeneratingImage(false);
+    }
+  };
+
+  const handleRegenerateVoice = async () => {
+    setIsRegeneratingVoice(true);
+    try {
+      const response = await fetch(
+        `/api/projects/${projectId}/scenes/${scene.id}/generate-voice`,
+        { method: "POST" }
+      );
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to generate voice");
+      }
+      const data = await response.json();
+      updateScene(scene.id, { audioUrl: data.scene.audioUrl });
+      toast.success(`Scene ${scene.order} voice generated!`);
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to generate voice"
+      );
+    } finally {
+      setIsRegeneratingVoice(false);
     }
   };
 
@@ -158,6 +183,19 @@ export function SceneCard({
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
                   ) : (
                     <ImageIcon className="h-3.5 w-3.5" />
+                  )}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleRegenerateVoice}
+                  disabled={isRegeneratingVoice}
+                  title={scene.audioUrl ? "Regenerate voice" : "Generate voice"}
+                >
+                  {isRegeneratingVoice ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Volume2 className="h-3.5 w-3.5" />
                   )}
                 </Button>
                 <Button
@@ -277,6 +315,22 @@ export function SceneCard({
                   <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <ImageIcon className="h-3.5 w-3.5" />
                     No image
+                  </span>
+                </div>
+              )}
+
+              {/* Audio preview */}
+              {scene.audioUrl ? (
+                <div className="rounded-md bg-muted p-2">
+                  <audio controls className="w-full" src={scene.audioUrl}>
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+              ) : (
+                <div className="flex h-12 items-center justify-center rounded-md border border-dashed bg-muted/30">
+                  <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <Volume2 className="h-3.5 w-3.5" />
+                    No audio
                   </span>
                 </div>
               )}
