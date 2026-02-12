@@ -6,6 +6,7 @@ import { ArrowLeft, Sparkles } from "lucide-react";
 import { useProjectStore } from "@/store/project-store";
 import { GenerateButton } from "@/components/story/generate-button";
 import { GenerateImagesButton } from "@/components/story/generate-images-button";
+import { GenerateVoicesButton } from "@/components/story/generate-voices-button";
 import { SaveButton } from "@/components/story/save-button";
 import { ProcessingOverlay } from "@/components/story/processing-overlay";
 import { SceneList } from "@/components/story/scene-list";
@@ -89,6 +90,9 @@ export function StoryEditor({ project, initialScenes }: StoryEditorProps) {
             <GenerateButton projectId={project.id} />
             {scenes.length > 0 && (
               <GenerateImagesButton projectId={project.id} />
+            )}
+            {scenes.length > 0 && (
+              <GenerateVoicesButton projectId={project.id} />
             )}
             {scenes.length > 0 && <SaveButton projectId={project.id} />}
           </div>
