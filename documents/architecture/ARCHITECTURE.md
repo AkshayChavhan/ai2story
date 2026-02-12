@@ -1,6 +1,6 @@
 # StoryForge AI — System Architecture
 ## Last Updated: 2026-02-11
-## Updated By Commit: feat:10_share-system
+## Updated By Commit: feat:11_media-library
 
 ---
 
@@ -54,7 +54,7 @@
 | POST | /api/projects/[id]/export | Generate ZIP bundle of all project assets | Done |
 | POST | /api/projects/[id]/share | Enable public sharing (generate token) | Done |
 | DELETE | /api/projects/[id]/share | Disable public sharing (clear token) | Done |
-| * | /api/media | Media library | Planned |
+| GET | /api/media | Media library (list items with type/search/pagination) | Done |
 | * | /api/templates | Story templates | Planned |
 
 ## Database Schema Overview
@@ -162,3 +162,6 @@ This folder preserves the exact development context for each feature, including 
 | 2026-02-11 | `generateMetadata` for OG tags | Share link previews show title + description + thumbnail in social/chat apps |
 | 2026-02-11 | Double-check `isPublic` on public page | Even with valid token, video won't display if isPublic is false (defense in depth) |
 | 2026-02-11 | Share requires composed video | Prevents sharing empty project; Enable Sharing disabled until videoUrl exists |
+| 2026-02-11 | Query Scene/Project for media library, not MediaAsset | All generated media URLs live on Scene records; avoids modifying 5+ generation routes |
+| 2026-02-11 | In-memory flatten + paginate for media items | Scenes flattened to individual items (1 scene → up to 3); fine for MVP scale |
+| 2026-02-11 | MediaAsset model reserved for future uploads | Existing model left untouched; will be used for user-uploaded custom media |

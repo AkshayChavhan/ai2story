@@ -82,6 +82,20 @@ export interface StoryProject {
   updatedAt: string;
 }
 
+// ─── Media Types ────────────────────────────────────────────────────
+
+export type MediaType = "image" | "audio" | "video";
+
+export interface MediaItem {
+  id: string;
+  type: MediaType;
+  url: string;
+  projectId: string;
+  projectTitle: string;
+  sceneOrder: number;
+  createdAt: string;
+}
+
 // ─── API Response Types ──────────────────────────────────────────────
 
 export interface ApiResponse<T = unknown> {
