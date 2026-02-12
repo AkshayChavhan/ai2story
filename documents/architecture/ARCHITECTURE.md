@@ -1,6 +1,6 @@
 # StoryForge AI — System Architecture
 ## Last Updated: 2026-02-11
-## Updated By Commit: feat:3_project-management
+## Updated By Commit: feat:4_story-generator-ui
 
 ---
 
@@ -39,6 +39,11 @@
 | GET | /api/projects/[id] | Fetch single project | Done |
 | PUT | /api/projects/[id] | Update project | Done |
 | DELETE | /api/projects/[id] | Delete project (cascades) | Done |
+| POST | /api/projects/[id]/generate | Trigger AI story generation | Done |
+| GET | /api/projects/[id]/scenes | List scenes for a project | Done |
+| PUT | /api/projects/[id]/scenes | Bulk save/update all scenes | Done |
+| PUT | /api/projects/[id]/scenes/[sceneId] | Update a single scene | Done |
+| DELETE | /api/projects/[id]/scenes/[sceneId] | Delete a scene + reorder | Done |
 | * | /api/voices | List TTS voices | Planned |
 | * | /api/media | Media library | Planned |
 | * | /api/templates | Story templates | Planned |
@@ -111,3 +116,7 @@ This folder preserves the exact development context for each feature, including 
 | 2026-02-11 | API routes for project CRUD | Project list needs client-side search/filter; API routes enable that while server pages use direct Prisma |
 | 2026-02-11 | No Radix UI for Dialog/Select | Continued zero-dependency approach; native Dialog with portal + escape + click-outside; native `<select>` for form dropdowns |
 | 2026-02-11 | `z.input<>` for form types | Avoids type mismatch between Zod output types (with defaults) and react-hook-form input types |
+| 2026-02-11 | Simulated progress for story generation | `generateStory()` is a single Gemini API call (not streamed); UI uses setInterval with progress steps |
+| 2026-02-11 | Bulk save (delete-all + recreate) for scenes | Simplest approach for handling reorders, additions, and deletions in one PUT; avoids complex upsert logic |
+| 2026-02-11 | Optimistic UI via Zustand for scene editing | All edits happen immediately in client store; "Save" button persists entire state to DB |
+| 2026-02-11 | No drag-and-drop for scene reordering | Move Up/Down buttons avoid new dependencies; works with existing `reorderScenes()` store action |

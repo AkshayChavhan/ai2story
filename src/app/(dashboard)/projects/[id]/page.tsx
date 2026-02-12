@@ -160,8 +160,8 @@ export default async function ProjectPage({
         </Card>
       </div>
 
-      {/* Generate Story CTA */}
-      {project.status === "draft" && (
+      {/* Story CTA */}
+      {project.status === "draft" && project._count.scenes === 0 ? (
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center gap-3 py-8">
             <Sparkles className="h-8 w-8 text-primary" />
@@ -174,6 +174,34 @@ export default async function ProjectPage({
             >
               <Sparkles className="h-4 w-4" />
               Generate Story
+            </Link>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardContent className="flex flex-col items-center gap-3 py-8 sm:flex-row sm:justify-between">
+            <div>
+              <p className="font-medium text-foreground">
+                {project._count.scenes > 0
+                  ? `${project._count.scenes} scene${project._count.scenes !== 1 ? "s" : ""} generated`
+                  : "No scenes yet"}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {project._count.scenes > 0
+                  ? "View, edit, or regenerate your story scenes."
+                  : "Generate scenes from your project prompt using AI."}
+              </p>
+            </div>
+            <Link
+              href={`/projects/${project.id}/story`}
+              className={cn(buttonVariants(), "gap-2")}
+            >
+              {project._count.scenes > 0 ? (
+                <Pencil className="h-4 w-4" />
+              ) : (
+                <Sparkles className="h-4 w-4" />
+              )}
+              {project._count.scenes > 0 ? "Edit Story" : "Generate Story"}
             </Link>
           </CardContent>
         </Card>
