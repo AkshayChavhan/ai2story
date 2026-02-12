@@ -1,6 +1,6 @@
 # StoryForge AI — System Architecture
 ## Last Updated: 2026-02-11
-## Updated By Commit: feat:7_voice-generation
+## Updated By Commit: feat:8_video-composition
 
 ---
 
@@ -17,7 +17,7 @@
 | AI - Story | Google Gemini | Free tier | 15 RPM |
 | AI - Images | Pollinations.ai | Free, no key | Flux-based |
 | AI - Voice | Edge TTS | Free, unlimited | 300+ voices |
-| Video | FFmpeg | via fluent-ffmpeg | Ken Burns + transitions |
+| Video | FFmpeg | via ffmpeg-static | Ken Burns + transitions |
 | Email | Resend | Free tier | 3K emails/month |
 | Forms | React Hook Form + Zod | Latest | Validation |
 | Notifications | Sonner | Latest | Toast notifications |
@@ -49,6 +49,7 @@
 | GET | /api/voices | List available TTS voices (cached) | Done |
 | POST | /api/projects/[id]/generate-voices | Batch generate audio for all scenes | Done |
 | POST | /api/projects/[id]/scenes/[sceneId]/generate-voice | Regenerate audio for a single scene | Done |
+| POST | /api/projects/[id]/compose | Batch compose video from images + audio | Done |
 | * | /api/media | Media library | Planned |
 | * | /api/templates | Story templates | Planned |
 | * | /api/share | Public sharing | Planned |
@@ -137,3 +138,10 @@ This folder preserves the exact development context for each feature, including 
 | 2026-02-11 | HTML5 `<audio controls>` for playback | Native browser player, zero dependencies, works everywhere |
 | 2026-02-11 | Voice settings saved per-scene in DB | voiceId, voiceSpeed, voicePitch persisted for reproducibility |
 | 2026-02-11 | Module-level cache for voice list | `listVoices()` makes network call; cached in module variable |
+| 2026-02-11 | `ffmpeg-static` for FFmpeg binary | Bundles FFmpeg binary via npm; Turbopack-compatible (`@ffmpeg-installer/ffmpeg` failed with dynamic require) |
+| 2026-02-11 | 3s delay between scene compositions | Video composition is CPU-intensive; prevents system overload |
+| 2026-02-11 | `getVideoResolution()` from aspect ratio | Maps 9:16→1080x1920, 16:9→1920x1080, 1:1→1080x1080 |
+| 2026-02-11 | ComposeButton prerequisite check | Disabled until all scenes have both imageUrl and audioUrl |
+| 2026-02-11 | No per-scene video recomposition | Composition is expensive; batch-only from toolbar or gallery |
+| 2026-02-11 | HTML5 `<video controls>` for playback | Native browser video player, zero dependencies |
+| 2026-02-11 | `concatenateScenes()` helper | Separates concatenation from scene composition for clean API |

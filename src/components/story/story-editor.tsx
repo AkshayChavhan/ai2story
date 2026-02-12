@@ -7,6 +7,7 @@ import { useProjectStore } from "@/store/project-store";
 import { GenerateButton } from "@/components/story/generate-button";
 import { GenerateImagesButton } from "@/components/story/generate-images-button";
 import { GenerateVoicesButton } from "@/components/story/generate-voices-button";
+import { ComposeButton } from "@/components/story/compose-button";
 import { SaveButton } from "@/components/story/save-button";
 import { ProcessingOverlay } from "@/components/story/processing-overlay";
 import { SceneList } from "@/components/story/scene-list";
@@ -93,6 +94,9 @@ export function StoryEditor({ project, initialScenes }: StoryEditorProps) {
             )}
             {scenes.length > 0 && (
               <GenerateVoicesButton projectId={project.id} />
+            )}
+            {scenes.length > 0 && (
+              <ComposeButton projectId={project.id} />
             )}
             {scenes.length > 0 && <SaveButton projectId={project.id} />}
           </div>
