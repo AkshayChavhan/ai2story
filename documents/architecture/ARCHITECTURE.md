@@ -1,6 +1,6 @@
 # StoryForge AI — System Architecture
 ## Last Updated: 2026-02-11
-## Updated By Commit: feat:8_video-composition
+## Updated By Commit: feat:9_export-download
 
 ---
 
@@ -18,6 +18,7 @@
 | AI - Images | Pollinations.ai | Free, no key | Flux-based |
 | AI - Voice | Edge TTS | Free, unlimited | 300+ voices |
 | Video | FFmpeg | via ffmpeg-static | Ken Burns + transitions |
+| Export | archiver | Latest | ZIP bundle creation |
 | Email | Resend | Free tier | 3K emails/month |
 | Forms | React Hook Form + Zod | Latest | Validation |
 | Notifications | Sonner | Latest | Toast notifications |
@@ -50,6 +51,7 @@
 | POST | /api/projects/[id]/generate-voices | Batch generate audio for all scenes | Done |
 | POST | /api/projects/[id]/scenes/[sceneId]/generate-voice | Regenerate audio for a single scene | Done |
 | POST | /api/projects/[id]/compose | Batch compose video from images + audio | Done |
+| POST | /api/projects/[id]/export | Generate ZIP bundle of all project assets | Done |
 | * | /api/media | Media library | Planned |
 | * | /api/templates | Story templates | Planned |
 | * | /api/share | Public sharing | Planned |
@@ -145,3 +147,11 @@ This folder preserves the exact development context for each feature, including 
 | 2026-02-11 | No per-scene video recomposition | Composition is expensive; batch-only from toolbar or gallery |
 | 2026-02-11 | HTML5 `<video controls>` for playback | Native browser video player, zero dependencies |
 | 2026-02-11 | `concatenateScenes()` helper | Separates concatenation from scene composition for clean API |
+| 2026-02-11 | `archiver` for ZIP export | No native Node.js ZIP utility; archiver is lightweight, streaming, well-maintained |
+| 2026-02-11 | Streaming ZIP via TransformStream | Pipes archiver output to Web API ReadableStream; no temp file on disk |
+| 2026-02-11 | Client-side video download | Final video already in public/; programmatic anchor with download attribute, no API call |
+| 2026-02-11 | ZIP requires composed video | Export only available after video composition; ensures primary deliverable exists |
+| 2026-02-11 | `existsSync()` for ZIP assets | Gracefully skip missing files instead of failing entire export |
+| 2026-02-11 | Padded scene naming in ZIP | `scene-01`, `scene-02` for clean alphabetical sorting |
+| 2026-02-11 | Share page reused for export | `/projects/[id]/share` stub becomes export page; feat:10 adds sharing alongside |
+| 2026-02-11 | Dual Download/Export button | "Download" when video exists (direct MP4), "Export" when no video (navigate to export page) |

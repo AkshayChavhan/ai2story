@@ -104,7 +104,7 @@ export default async function ProjectPage({
         </div>
 
         {/* Action buttons — client component for delete dialog */}
-        <ProjectActions projectId={project.id} projectTitle={project.title} />
+        <ProjectActions projectId={project.id} projectTitle={project.title} videoUrl={project.videoUrl} />
       </div>
 
       {/* Prompt */}
