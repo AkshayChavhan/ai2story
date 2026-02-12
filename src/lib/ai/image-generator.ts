@@ -27,7 +27,7 @@ export function getPollinationsImageUrl(params: ImageGenerationParams): string {
 
   // Pollinations.ai generates images via URL — no API key needed
   const encodedPrompt = encodeURIComponent(prompt);
-  return `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${width}&height=${height}&model=${model}`;
+  return `https://image.pollinations.ai/prompt/${encodedPrompt}?width=${width}&height=${height}&model=${model}&nologo=true`;
 }
 
 /**

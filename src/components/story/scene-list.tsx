@@ -10,6 +10,7 @@ import { Plus } from "lucide-react";
  */
 export function SceneList() {
   const scenes = useProjectStore((s) => s.scenes);
+  const currentProject = useProjectStore((s) => s.currentProject);
   const reorderScenes = useProjectStore((s) => s.reorderScenes);
   const removeScene = useProjectStore((s) => s.removeScene);
   const addScene = useProjectStore((s) => s.addScene);
@@ -29,6 +30,7 @@ export function SceneList() {
         <SceneCard
           key={scene.id}
           scene={scene}
+          projectId={currentProject?.id || ""}
           index={index}
           totalScenes={scenes.length}
           onMoveUp={() => reorderScenes(index, index - 1)}
