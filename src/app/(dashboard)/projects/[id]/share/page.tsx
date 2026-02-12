@@ -4,11 +4,12 @@ import { ArrowLeft } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ExportPanel } from "@/components/export/export-panel";
+import { SharePanel } from "@/components/share/share-panel";
+import { Separator } from "@/components/ui/separator";
 
 /**
- * Export & Download Page — StoryForge AI
- * Server Component: fetches project + scenes, renders ExportPanel client component.
- * Download functionality is feat:9. Sharing (public link) will be added in feat:10.
+ * Export & Share Page — StoryForge AI
+ * Server Component: fetches project + scenes, renders SharePanel and ExportPanel.
  */
 export default async function SharePage({
   params,
@@ -55,10 +56,19 @@ export default async function SharePage({
       </Link>
       <div>
         <h1 className="text-2xl font-bold text-foreground lg:text-3xl">
-          Export & Download
+          Export & Share
         </h1>
         <p className="mt-1 text-muted-foreground">{project.title}</p>
       </div>
+      <SharePanel
+        projectId={project.id}
+        initialIsPublic={project.isPublic}
+        initialShareToken={project.shareToken}
+        videoUrl={project.videoUrl}
+      />
+
+      <Separator />
+
       <ExportPanel
         projectId={project.id}
         projectTitle={project.title}

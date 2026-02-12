@@ -77,6 +77,7 @@ export interface StoryProject {
   videoUrl?: string;
   thumbnailUrl?: string;
   isPublic: boolean;
+  shareToken?: string;
   createdAt: string;
   updatedAt: string;
 }

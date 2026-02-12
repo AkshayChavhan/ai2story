@@ -1,6 +1,6 @@
 # StoryForge AI — System Architecture
 ## Last Updated: 2026-02-11
-## Updated By Commit: feat:9_export-download
+## Updated By Commit: feat:10_share-system
 
 ---
 
@@ -52,9 +52,10 @@
 | POST | /api/projects/[id]/scenes/[sceneId]/generate-voice | Regenerate audio for a single scene | Done |
 | POST | /api/projects/[id]/compose | Batch compose video from images + audio | Done |
 | POST | /api/projects/[id]/export | Generate ZIP bundle of all project assets | Done |
+| POST | /api/projects/[id]/share | Enable public sharing (generate token) | Done |
+| DELETE | /api/projects/[id]/share | Disable public sharing (clear token) | Done |
 | * | /api/media | Media library | Planned |
 | * | /api/templates | Story templates | Planned |
-| * | /api/share | Public sharing | Planned |
 
 ## Database Schema Overview
 
@@ -155,3 +156,9 @@ This folder preserves the exact development context for each feature, including 
 | 2026-02-11 | Padded scene naming in ZIP | `scene-01`, `scene-02` for clean alphabetical sorting |
 | 2026-02-11 | Share page reused for export | `/projects/[id]/share` stub becomes export page; feat:10 adds sharing alongside |
 | 2026-02-11 | Dual Download/Export button | "Download" when video exists (direct MP4), "Export" when no video (navigate to export page) |
+| 2026-02-11 | `crypto.randomUUID()` for share tokens | Built-in Node.js, already used in auth; UUID v4 gives sufficient uniqueness |
+| 2026-02-11 | Button toggle for sharing, not Switch | Switch component doesn't exist; avoiding Radix dependency per conventions |
+| 2026-02-11 | Server Component for public share page | No interactivity needed; better for SEO and initial load |
+| 2026-02-11 | `generateMetadata` for OG tags | Share link previews show title + description + thumbnail in social/chat apps |
+| 2026-02-11 | Double-check `isPublic` on public page | Even with valid token, video won't display if isPublic is false (defense in depth) |
+| 2026-02-11 | Share requires composed video | Prevents sharing empty project; Enable Sharing disabled until videoUrl exists |
