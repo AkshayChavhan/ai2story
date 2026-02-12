@@ -39,6 +39,9 @@ export async function POST(request: Request) {
     // Hash password
     const passwordHash = await hashPassword(password);
 
+    // Auto-verify if no email service configured (development mode)
+    const hasEmailService = !!process.env.RESEND_API_KEY;
+
     // Create user
     await prisma.user.create({
       data: {
@@ -46,21 +49,28 @@ export async function POST(request: Request) {
         name,
         passwordHash,
         provider: "credentials",
+        ...(hasEmailService ? {} : { emailVerified: new Date() }),
       },
     });
 
-    // Generate verification token
-    const token = generateToken();
-    await prisma.verificationToken.create({
-      data: {
-        identifier: email,
-        token,
-        expires: createTokenExpiry(24), // 24 hours
-      },
-    });
+    if (hasEmailService) {
+      // Generate verification token
+      const token = generateToken();
+      await prisma.verificationToken.create({
+        data: {
+          identifier: email,
+          token,
+          expires: createTokenExpiry(24), // 24 hours
+        },
+      });
 
-    // Send verification email
-    await sendVerificationEmail(email, token);
+      // Send verification email (non-blocking — signup succeeds even if email fails)
+      try {
+        await sendVerificationEmail(email, token);
+      } catch (emailError) {
+        console.error("Failed to send verification email:", emailError);
+      }
+    }
 
     return NextResponse.json(
       {
