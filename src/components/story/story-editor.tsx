@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Sparkles } from "lucide-react";
 import { useProjectStore } from "@/store/project-store";
 import { GenerateButton } from "@/components/story/generate-button";
+import { GenerateImagesButton } from "@/components/story/generate-images-button";
 import { SaveButton } from "@/components/story/save-button";
 import { ProcessingOverlay } from "@/components/story/processing-overlay";
 import { SceneList } from "@/components/story/scene-list";
@@ -84,8 +85,11 @@ export function StoryEditor({ project, initialScenes }: StoryEditorProps) {
             </h1>
             <p className="mt-1 text-muted-foreground">{project.title}</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <GenerateButton projectId={project.id} />
+            {scenes.length > 0 && (
+              <GenerateImagesButton projectId={project.id} />
+            )}
             {scenes.length > 0 && <SaveButton projectId={project.id} />}
           </div>
         </div>

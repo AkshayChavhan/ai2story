@@ -28,7 +28,11 @@ import {
   Clock,
   Camera,
   Palette,
+  ImageIcon,
+  RefreshCw,
+  Loader2,
 } from "lucide-react";
+import { toast } from "sonner";
 import type { StoryScene } from "@/types";
 
 /**
@@ -38,6 +42,7 @@ import type { StoryScene } from "@/types";
 
 interface SceneCardProps {
   scene: StoryScene;
+  projectId: string;
   index: number;
   totalScenes: number;
   onMoveUp: () => void;
@@ -47,6 +52,7 @@ interface SceneCardProps {
 
 export function SceneCard({
   scene,
+  projectId,
   index,
   totalScenes,
   onMoveUp,
@@ -56,6 +62,30 @@ export function SceneCard({
   const updateScene = useProjectStore((s) => s.updateScene);
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isRegeneratingImage, setIsRegeneratingImage] = useState(false);
+
+  const handleRegenerateImage = async () => {
+    setIsRegeneratingImage(true);
+    try {
+      const response = await fetch(
+        `/api/projects/${projectId}/scenes/${scene.id}/generate-image`,
+        { method: "POST" }
+      );
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to generate image");
+      }
+      const data = await response.json();
+      updateScene(scene.id, { imageUrl: data.scene.imageUrl });
+      toast.success(`Scene ${scene.order} image generated!`);
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to generate image"
+      );
+    } finally {
+      setIsRegeneratingImage(false);
+    }
+  };
 
   // Local edit state
   const [narrationText, setNarrationText] = useState(scene.narrationText);
@@ -117,6 +147,19 @@ export function SceneCard({
               </>
             ) : (
               <>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleRegenerateImage}
+                  disabled={isRegeneratingImage}
+                  title={scene.imageUrl ? "Regenerate image" : "Generate image"}
+                >
+                  {isRegeneratingImage ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <ImageIcon className="h-3.5 w-3.5" />
+                  )}
+                </Button>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -219,6 +262,25 @@ export function SceneCard({
             </>
           ) : (
             <>
+              {/* Image preview */}
+              {scene.imageUrl ? (
+                <div className="overflow-hidden rounded-md bg-muted">
+                  <img
+                    src={scene.imageUrl}
+                    alt={`Scene ${scene.order}`}
+                    className="w-full object-cover"
+                    style={{ maxHeight: "200px" }}
+                  />
+                </div>
+              ) : (
+                <div className="flex h-24 items-center justify-center rounded-md border border-dashed bg-muted/30">
+                  <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <ImageIcon className="h-3.5 w-3.5" />
+                    No image
+                  </span>
+                </div>
+              )}
+
               <div>
                 <p className="text-xs font-medium text-muted-foreground">
                   Narration

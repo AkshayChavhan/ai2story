@@ -1,6 +1,6 @@
 # StoryForge AI — System Architecture
 ## Last Updated: 2026-02-11
-## Updated By Commit: feat:4_story-generator-ui
+## Updated By Commit: feat:6_image-generation
 
 ---
 
@@ -44,6 +44,8 @@
 | PUT | /api/projects/[id]/scenes | Bulk save/update all scenes | Done |
 | PUT | /api/projects/[id]/scenes/[sceneId] | Update a single scene | Done |
 | DELETE | /api/projects/[id]/scenes/[sceneId] | Delete a scene + reorder | Done |
+| POST | /api/projects/[id]/generate-images | Batch generate images for all scenes | Done |
+| POST | /api/projects/[id]/scenes/[sceneId]/generate-image | Regenerate image for a single scene | Done |
 | * | /api/voices | List TTS voices | Planned |
 | * | /api/media | Media library | Planned |
 | * | /api/templates | Story templates | Planned |
@@ -120,3 +122,10 @@ This folder preserves the exact development context for each feature, including 
 | 2026-02-11 | Bulk save (delete-all + recreate) for scenes | Simplest approach for handling reorders, additions, and deletions in one PUT; avoids complex upsert logic |
 | 2026-02-11 | Optimistic UI via Zustand for scene editing | All edits happen immediately in client store; "Save" button persists entire state to DB |
 | 2026-02-11 | No drag-and-drop for scene reordering | Move Up/Down buttons avoid new dependencies; works with existing `reorderScenes()` store action |
+| 2026-02-11 | Sequential image generation with 2s delay | Pollinations.ai rate limits; sequential also enables per-scene progress tracking |
+| 2026-02-11 | Image style prepended to visual prompt | Format `"{imageStyle} style, {visualPrompt}"` for consistent results across scenes |
+| 2026-02-11 | Per-scene error handling in batch generation | One failed image doesn't prevent all others from generating |
+| 2026-02-11 | Server-side batch processing for images | Single POST processes all scenes server-side; survives tab close |
+| 2026-02-11 | Local `<img>` tags for generated images | Images are local files in `public/uploads/`; no Next.js Image domain config needed |
+| 2026-02-11 | `nologo=true` on Pollinations URL | Removes watermark from generated images |
+| 2026-02-11 | Local React state for ImageGallery | Standalone page uses local state instead of Zustand (independent from Story Editor) |
