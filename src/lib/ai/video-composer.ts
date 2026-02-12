@@ -4,23 +4,45 @@
  */
 
 import ffmpeg from "fluent-ffmpeg";
+import ffmpegPath from "ffmpeg-static";
 import path from "path";
 import { mkdir } from "fs/promises";
 import { v4 as uuidv4 } from "uuid";
 
+// Set FFmpeg binary path from npm-installed package
+if (ffmpegPath) {
+  ffmpeg.setFfmpegPath(ffmpegPath);
+}
+
 const OUTPUT_DIR = path.join(process.cwd(), "public", "uploads", "videos");
 
-interface SceneInput {
+export interface SceneInput {
   imagePath: string;
   audioPath: string;
   duration: number; // seconds
 }
 
-interface ComposeOptions {
+export interface ComposeOptions {
   scenes: SceneInput[];
-  resolution?: string; // "1280x720" or "1920x1080"
+  resolution?: string; // "1080x1920" or "1920x1080"
   fps?: number;
   transitionDuration?: number; // seconds
+}
+
+/**
+ * Map project aspect ratio to FFmpeg resolution string.
+ */
+export function getVideoResolution(aspectRatio: string): string {
+  switch (aspectRatio) {
+    case "9:16":
+      return "1080x1920"; // vertical/shorts
+    case "16:9":
+      return "1920x1080"; // landscape
+    case "1:1":
+      return "1080x1080"; // square
+    default:
+      return "1920x1080";
+  }
 }
 
 /**
@@ -73,6 +95,27 @@ export function composeScene(
 }
 
 /**
+ * Concatenate multiple scene video clips into a single output file.
+ */
+export function concatenateScenes(
+  scenePaths: string[],
+  outputPath: string
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const command = ffmpeg();
+
+    scenePaths.forEach((scenePath) => {
+      command.input(scenePath);
+    });
+
+    command
+      .on("end", () => resolve())
+      .on("error", (err: Error) => reject(err))
+      .mergeToFile(outputPath, OUTPUT_DIR);
+  });
+}
+
+/**
  * Compose the final video from all scene clips.
  * Concatenates scenes with crossfade transitions.
  */
@@ -82,10 +125,7 @@ export async function composeVideo(
   await ensureOutputDir();
 
   const { scenes, resolution = "1920x1080" } = options;
-  const outputFileName = `${uuidv4()}.mp4`;
-  const outputPath = path.join(OUTPUT_DIR, outputFileName);
 
-  // For MVP: simple concatenation without complex transitions
   // Compose each scene individually, then concatenate
   const scenePaths: string[] = [];
 
@@ -95,25 +135,16 @@ export async function composeVideo(
     scenePaths.push(scenePath);
   }
 
-  // Concatenate all scene videos
+  // Single scene — return its path directly
   if (scenePaths.length === 1) {
-    // Only one scene — just use it directly
-    return `/uploads/videos/${outputFileName}`;
+    const sceneFileName = path.basename(scenePaths[0]);
+    return `/uploads/videos/${sceneFileName}`;
   }
 
-  // Create concat file list
-  return new Promise((resolve, reject) => {
-    const command = ffmpeg();
+  // Concatenate all scene videos
+  const outputFileName = `${uuidv4()}.mp4`;
+  const outputPath = path.join(OUTPUT_DIR, outputFileName);
+  await concatenateScenes(scenePaths, outputPath);
 
-    scenePaths.forEach((scenePath) => {
-      command.input(scenePath);
-    });
-
-    command
-      .on("end", () => {
-        resolve(`/uploads/videos/${outputFileName}`);
-      })
-      .on("error", (err: Error) => reject(err))
-      .mergeToFile(outputPath, OUTPUT_DIR);
-  });
+  return `/uploads/videos/${outputFileName}`;
 }
