@@ -26,7 +26,7 @@ interface SendEmailParams {
 export async function sendEmail({ to, subject, html }: SendEmailParams) {
   try {
     const data = await getResend().emails.send({
-      from: "StoryForge AI <noreply@storyforge.ai>",
+      from: process.env.EMAIL_FROM || "StoryForge AI <onboarding@resend.dev>",
       to,
       subject,
       html,
