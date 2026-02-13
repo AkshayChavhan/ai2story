@@ -96,6 +96,19 @@ export interface MediaItem {
   createdAt: string;
 }
 
+// ─── Template Types ─────────────────────────────────────────────────
+
+export interface StoryTemplate {
+  id: string;
+  title: string;
+  description: string;
+  prompt: string;
+  genre: string;
+  thumbnail?: string | null;
+  isActive: boolean;
+  createdAt: string;
+}
+
 // ─── API Response Types ──────────────────────────────────────────────
 
 export interface ApiResponse<T = unknown> {
