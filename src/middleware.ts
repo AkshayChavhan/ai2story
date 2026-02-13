@@ -17,7 +17,13 @@ export async function middleware(req: NextRequest) {
   const pathname = nextUrl.pathname;
 
   // Get JWT token (edge-compatible, no Prisma needed)
-  const token = await getToken({ req, secret: process.env.AUTH_SECRET });
+  // secureCookie must be true on HTTPS (production) to read the __Secure- prefixed cookie
+  const secureCookie = req.nextUrl.protocol === "https:";
+  const token = await getToken({
+    req,
+    secret: process.env.AUTH_SECRET,
+    secureCookie,
+  });
   const isLoggedIn = !!token;
 
   // Define route categories
