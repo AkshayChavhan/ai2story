@@ -1,6 +1,6 @@
 # StoryForge AI — System Architecture
-## Last Updated: 2026-02-11
-## Updated By Commit: feat:12_story-templates
+## Last Updated: 2026-02-13
+## Updated By Commit: feat:13_settings-profile
 
 ---
 
@@ -56,6 +56,9 @@
 | DELETE | /api/projects/[id]/share | Disable public sharing (clear token) | Done |
 | GET | /api/media | Media library (list items with type/search/pagination) | Done |
 | GET | /api/templates | List active story templates (search, genre filter) | Done |
+| GET | /api/user/profile | Fetch current user profile | Done |
+| PUT | /api/user/profile | Update user name | Done |
+| PUT | /api/user/password | Change password (current + new) | Done |
 
 ## Database Schema Overview
 
@@ -169,3 +172,7 @@ This folder preserves the exact development context for each feature, including 
 | 2026-02-13 | Seed script for default templates | `prisma/seed-templates.ts` populates 11 genre-diverse templates; skips if templates already exist |
 | 2026-02-13 | Template pre-fill via query param | `?templateId=` on `/projects/new` fetches template server-side and passes data to CreateForm |
 | 2026-02-13 | No pagination for templates | Template count is small (admin-managed); all active templates returned in single API call |
+| 2026-02-13 | Two API routes for settings | Profile (name) and password are separate concerns; cleaner route structure |
+| 2026-02-13 | OAuth password guard | Users without passwordHash (OAuth-only) cannot change password; clear message shown |
+| 2026-02-13 | Server-side profile fetch | Settings page uses Prisma in Server Component; passes serialized data to client forms |
+| 2026-02-13 | No avatar upload for MVP | Avatar field exists in schema but file upload skipped; can add later |
