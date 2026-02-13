@@ -31,9 +31,19 @@ import { capitalize } from "@/lib/utils";
 /**
  * Create project form — react-hook-form + Zod validation.
  * Posts to /api/projects and redirects to the new project on success.
+ * Accepts optional templateData to pre-fill form fields from a story template.
  */
 
-export function CreateForm() {
+interface CreateFormProps {
+  templateData?: {
+    title: string;
+    description: string;
+    prompt: string;
+    genre: string;
+  } | null;
+}
+
+export function CreateForm({ templateData }: CreateFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -44,9 +54,10 @@ export function CreateForm() {
   } = useForm<CreateProjectFormData>({
     resolver: zodResolver(createProjectSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      prompt: "",
+      title: templateData?.title || "",
+      description: templateData?.description || "",
+      prompt: templateData?.prompt || "",
+      genre: (templateData?.genre as CreateProjectFormData["genre"]) || undefined,
       language: "en",
       imageStyle: "photorealistic",
       aspectRatio: "9:16",

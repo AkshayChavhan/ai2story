@@ -1,6 +1,6 @@
 # StoryForge AI — System Architecture
 ## Last Updated: 2026-02-11
-## Updated By Commit: feat:11_media-library
+## Updated By Commit: feat:12_story-templates
 
 ---
 
@@ -55,7 +55,7 @@
 | POST | /api/projects/[id]/share | Enable public sharing (generate token) | Done |
 | DELETE | /api/projects/[id]/share | Disable public sharing (clear token) | Done |
 | GET | /api/media | Media library (list items with type/search/pagination) | Done |
-| * | /api/templates | Story templates | Planned |
+| GET | /api/templates | List active story templates (search, genre filter) | Done |
 
 ## Database Schema Overview
 
@@ -165,3 +165,7 @@ This folder preserves the exact development context for each feature, including 
 | 2026-02-11 | Query Scene/Project for media library, not MediaAsset | All generated media URLs live on Scene records; avoids modifying 5+ generation routes |
 | 2026-02-11 | In-memory flatten + paginate for media items | Scenes flattened to individual items (1 scene → up to 3); fine for MVP scale |
 | 2026-02-11 | MediaAsset model reserved for future uploads | Existing model left untouched; will be used for user-uploaded custom media |
+| 2026-02-13 | System-wide templates, not user-specific | StoryTemplate model has no userId; templates are shared across all users |
+| 2026-02-13 | Seed script for default templates | `prisma/seed-templates.ts` populates 11 genre-diverse templates; skips if templates already exist |
+| 2026-02-13 | Template pre-fill via query param | `?templateId=` on `/projects/new` fetches template server-side and passes data to CreateForm |
+| 2026-02-13 | No pagination for templates | Template count is small (admin-managed); all active templates returned in single API call |
